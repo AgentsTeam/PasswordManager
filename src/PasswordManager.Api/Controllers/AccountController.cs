@@ -1,8 +1,10 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using PasswordManager.Api.Models;
 using PasswordManager.Common.Helpers;
 using PasswordManager.Common.Models;
+using PasswordManager.Domain.Commands;
+using PasswordManager.Domain.Contracts;
+using PasswordManager.Domain.Domains;
 
 namespace PasswordManager.Api.Controllers
 {
@@ -11,54 +13,59 @@ namespace PasswordManager.Api.Controllers
     public class AccountController : ControllerBase
     {
         private readonly JwtSetting _jwtSetting;
-        public AccountController(JwtSetting jwtSetting)
+        private readonly IPasswordManagerRepository _repository;
+        public AccountController(JwtSetting jwtSetting, IPasswordManagerRepository repository)
         {
             _jwtSetting = jwtSetting;
+            _repository = repository;
         }
 
-        private IEnumerable<Users> logins = new List<Users>() {
-            new Users() {
-                    Id = Guid.NewGuid(),
-                        EmailId = "adminakp@gmail.com",
-                        UserName = "Admin",
-                        Password = "Admin",
-                },
-                new Users() {
-                    Id = Guid.NewGuid(),
-                        EmailId = "adminakp@gmail.com",
-                        UserName = "User1",
-                        Password = "Admin",
-                }
-        };
         [HttpPost]
-        public IActionResult Login(UserLogins userLogins)
+        public async Task<IActionResult> Register(UserRegisterCommand command)
+        {
+            var user = new User(command.UserName,command.Password)
+            {
+                FirstName = command.FirstName,
+                LastName = command.LastName,
+                Email = command.Email
+            };
+            user = await _repository.AddUser(user);
+            if (user != null)
+            {
+                return Ok();
+            }
+            return BadRequest("Cannot create a user");
+        }
+
+        [HttpPost]
+        public IActionResult Login(UserLoginCommand command)
         {
             try
             {
-                var Token = new JwtToken();
-                var Valid = logins.Any(x => x.UserName.Equals(userLogins.UserName, StringComparison.OrdinalIgnoreCase));
-                if (Valid)
+                var user = _repository.GetUser(command.UserName);
+                if (user != null)
                 {
-                    var user = logins.FirstOrDefault(x => x.UserName.Equals(userLogins.UserName, StringComparison.OrdinalIgnoreCase));
-                    Token = JwtHelper.GetTokenkey(new JwtToken()
+                    if (user.Password == command.Password)
                     {
-                        EmailId = user.EmailId,
-                        GuidId = Guid.NewGuid(),
-                        UserName = user.UserName,
-                        Id = user.Id,
-                    }, _jwtSetting);
+                        var token = JwtHelper.GetTokenkey(new JwtToken()
+                        {
+                            Email = user.Email,
+                            GuidId = Guid.NewGuid(),
+                            UserName = user.UserName,
+                            Id = user.Id,
+                        }, _jwtSetting);
+
+                        return Ok(token);
+                    }
                 }
-                else
-                {
-                    return BadRequest($"wrong password");
-                }
-                return Ok(Token);
+                return NotFound($"User/Password Incorrect");
             }
             catch (Exception ex)
             {
                 throw;
             }
         }
+
         /// <summary>
         /// Get List of UserAccounts
         /// </summary>
@@ -67,7 +74,7 @@ namespace PasswordManager.Api.Controllers
         [HttpGet]
         public IActionResult GetList()
         {
-            return Ok(logins);
+            return Ok();
         }
     }
 }

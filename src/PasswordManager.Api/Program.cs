@@ -2,6 +2,7 @@ using PasswordManager.Common.Models;
 using PasswordManager.Common.Extensions;
 using PasswordManager.Persistence;
 using Microsoft.EntityFrameworkCore;
+using PasswordManager.Api.Helpers;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,6 +15,7 @@ AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 
 // Add services to the container.
 builder.Services.AddControllers();
+builder.Services.AddCustomServices();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();

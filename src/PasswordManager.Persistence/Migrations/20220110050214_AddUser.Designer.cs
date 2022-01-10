@@ -12,8 +12,8 @@ using PasswordManager.Persistence;
 namespace PasswordManager.Persistence.Migrations
 {
     [DbContext(typeof(PasswordManagerRepository))]
-    [Migration("20220109203121_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20220110050214_AddUser")]
+    partial class AddUser
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -78,7 +78,7 @@ namespace PasswordManager.Persistence.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("Username")
+                    b.Property<string>("UserName")
                         .IsRequired()
                         .HasColumnType("text");
 
