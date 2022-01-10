@@ -1,14 +1,22 @@
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.IdentityModel.Tokens;
-using System.Text;
 using PasswordManager.Common.Models;
 using PasswordManager.Common.Extensions;
+using PasswordManager.Persistence;
+using Microsoft.EntityFrameworkCore;
+using PasswordManager.Api.Helpers;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+// Add Database
+builder.Services.AddDbContext<PasswordManagerRepository>(options => 
+{
+    options.UseNpgsql(builder.Configuration.GetConnectionString("PasswordManagerDb"));
+});
+AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 
+// Add services to the container.
 builder.Services.AddControllers();
+builder.Services.AddCustomServices();
+
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
@@ -35,22 +43,6 @@ builder.Services.AddSwaggerGen(options =>
     });
 });
 
-// Add Jwt Service
-/*
-builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
-{
-    options.TokenValidationParameters = new TokenValidationParameters
-    {
-        ValidateIssuer = true,
-        ValidateAudience = true,
-        ValidateLifetime = true,
-        ValidateIssuerSigningKey = true,
-        ValidIssuer = builder.Configuration["Jwt:Issuer"],
-        ValidAudience = builder.Configuration["Jwt:Issuer"],
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(builder.Configuration["Jwt:Secret"]))
-    };
-});
-*/
 var jwtSetting = new JwtSetting();
 builder.Configuration.Bind("JwtSetting", jwtSetting);
 builder.Services.AddJwtServices(jwtSetting);
