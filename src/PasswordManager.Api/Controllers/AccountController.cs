@@ -10,6 +10,8 @@ namespace PasswordManager.Api.Controllers
 {
     [Route("api/[controller]/[action]")]
     [ApiController]
+    [Consumes("application/json")]
+    [Produces("application/json")]
     public class AccountController : ControllerBase
     {
         private readonly JwtSetting _jwtSetting;
@@ -20,6 +22,23 @@ namespace PasswordManager.Api.Controllers
             _repository = repository;
         }
 
+        /// <summary>
+        /// Register a new user
+        /// </summary>
+        /// <param name="command"></param>
+        /// <returns></returns>
+        /// <remarks>
+        /// 
+        /// Example :
+        /// 
+        ///     {
+        ///         "userName" : "masoudmghd",
+        ///         "password" : "password",
+        ///         "firstName" : "Masoud",
+        ///         "lastName" : "Moghaddam",
+        ///         "email" : "masoud.mghd@gmail.com"
+        ///     }
+        /// </remarks>
         [HttpPost]
         public async Task<IActionResult> Register(UserRegisterCommand command)
         {
@@ -37,6 +56,20 @@ namespace PasswordManager.Api.Controllers
             return BadRequest("Cannot create a user");
         }
 
+        /// <summary>
+        /// Login with username and password
+        /// </summary>
+        /// <param name="command"></param>
+        /// <returns></returns>
+        /// <remarks>
+        /// 
+        /// Example :
+        /// 
+        ///     {
+        ///         "userName" : "masoudmghd",
+        ///         "password" : "password"
+        ///     }
+        /// </remarks>
         [HttpPost]
         public IActionResult Login(UserLoginCommand command)
         {
@@ -64,17 +97,6 @@ namespace PasswordManager.Api.Controllers
             {
                 throw;
             }
-        }
-
-        /// <summary>
-        /// Get List of UserAccounts
-        /// </summary>
-        /// <returns>List Of UserAccounts</returns>
-        [Authorize]
-        [HttpGet]
-        public IActionResult GetList()
-        {
-            return Ok();
         }
     }
 }
