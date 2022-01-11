@@ -3,11 +3,15 @@ using PasswordManager.Common.Extensions;
 using PasswordManager.Persistence;
 using Microsoft.EntityFrameworkCore;
 using PasswordManager.Api.Helpers;
+using PasswordManager.Common.Helpers;
+using System.Reflection;
+using Microsoft.OpenApi.Models;
+using PasswordManager.Common.Filters;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add Database
-builder.Services.AddDbContext<PasswordManagerRepository>(options => 
+builder.Services.AddDbContext<PasswordManagerRepository>(options =>
 {
     options.UseNpgsql(builder.Configuration.GetConnectionString("PasswordManagerDb"));
 });
@@ -15,32 +19,27 @@ AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 
 // Add services to the container.
 builder.Services.AddControllers();
+builder.Services.AddCommonServices();
 builder.Services.AddCustomServices();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
 {
+    options.OperationFilter<AuthorizeCheckOperationFilter>();
+
     options.AddSecurityDefinition("Bearer", new Microsoft.OpenApi.Models.OpenApiSecurityScheme
     {
         Name = "Authorization",
-        Type = Microsoft.OpenApi.Models.SecuritySchemeType.Http,
+        Type = SecuritySchemeType.Http,
         Scheme = "Bearer",
         BearerFormat = "JWT",
-        In = Microsoft.OpenApi.Models.ParameterLocation.Header,
+        In = ParameterLocation.Header,
         Description = "JWT Authorization header using the Bearer scheme."
     });
-    options.AddSecurityRequirement(new Microsoft.OpenApi.Models.OpenApiSecurityRequirement {
-        {
-            new Microsoft.OpenApi.Models.OpenApiSecurityScheme {
-                    Reference = new Microsoft.OpenApi.Models.OpenApiReference {
-                        Type = Microsoft.OpenApi.Models.ReferenceType.SecurityScheme,
-                            Id = "Bearer"
-                    }
-                },
-                new string[] {}
-        }
-    });
+
+    var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+    options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
 });
 
 var jwtSetting = new JwtSetting();
@@ -56,10 +55,13 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+HttpContextHelper.Configure(app.Services.GetRequiredService<IHttpContextAccessor>());
+
 app.UseHttpsRedirection();
 
+app.UseAuthentication();
 app.UseAuthorization();
-//app.UseAuthentication();
+
 
 app.MapControllers();
 

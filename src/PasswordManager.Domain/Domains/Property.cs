@@ -14,5 +14,13 @@ namespace PasswordManager.Domain.Domains
         public string Value { get; set; }
         public Guid UserId { get; set; }
         public User User { get; set; }
+
+        public Property(string name, string description, string value, Guid userId)
+        {
+            Name = name;
+            Description = description;
+            Value = value;
+            UserId = userId;
+        }
     }
 }

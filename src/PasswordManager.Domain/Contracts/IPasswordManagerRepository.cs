@@ -11,5 +11,8 @@ namespace PasswordManager.Domain.Contracts
     {
         User GetUser(string userName);
         Task<User> AddUser(User user);
+
+        Property GetProperty(int id);
+        Task<Property> AddProperty(Property property);
     }
 }

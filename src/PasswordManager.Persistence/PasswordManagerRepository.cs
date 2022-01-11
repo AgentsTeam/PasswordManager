@@ -19,6 +19,12 @@ namespace PasswordManager.Persistence
         public DbSet<User> Users { get; set; }
         public DbSet<Property> Properties { get; set; }
 
+        
+
+        public User GetUser(string userName)
+        {
+            return Users.FirstOrDefault(x => x.UserName == userName);
+        }
         public async Task<User> AddUser(User user)
         {
             await Users.AddAsync(user);
@@ -26,9 +32,17 @@ namespace PasswordManager.Persistence
             return user;
         }
 
-        public User GetUser(string userName)
+        public Property GetProperty(int id)
         {
-            return Users.FirstOrDefault(x => x.UserName == userName);
+            return Properties.Find(id);
         }
+        public async Task<Property> AddProperty(Property property)
+        {
+            await Properties.AddAsync(property);
+            await SaveChangesAsync();
+            return property;
+        }
+
+        
     }
 }

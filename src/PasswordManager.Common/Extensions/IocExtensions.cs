@@ -1,6 +1,9 @@
 ﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
+using PasswordManager.Common.Helpers;
 using PasswordManager.Common.Models;
 
 namespace PasswordManager.Common.Extensions
@@ -32,10 +35,13 @@ namespace PasswordManager.Common.Extensions
             };
 
             services.AddSingleton(settings);
-            services.AddAuthentication(options => {
+            services.AddAuthentication(options =>
+            {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
                 options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-            }).AddJwtBearer(options => {
+            }).AddJwtBearer(options =>
+            {
                 options.RequireHttpsMetadata = false;
                 options.SaveToken = true;
                 options.TokenValidationParameters = new TokenValidationParameters()
@@ -52,6 +58,18 @@ namespace PasswordManager.Common.Extensions
                 };
                 options.Events = events;
             });
+
+            /*
+            services.AddAuthorization(options =>
+            {
+                options.DefaultPolicy = new AuthorizationPolicyBuilder(options.DefaultPolicy).RequireAuthenticatedUser().Build();
+            });
+            */
+        }
+
+        public static void AddCommonServices(this IServiceCollection services)
+        {
+            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
         }
     }
 }
