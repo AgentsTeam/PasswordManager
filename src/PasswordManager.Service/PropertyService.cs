@@ -11,11 +11,11 @@ using System.Threading.Tasks;
 
 namespace PasswordManager.Service
 {
-    public class ProperyService
+    public class PropertyService
     {
         private readonly IPasswordManagerRepository _repository;
 
-        public ProperyService(IPasswordManagerRepository repository)
+        public PropertyService(IPasswordManagerRepository repository)
         {
             _repository = repository;
         }

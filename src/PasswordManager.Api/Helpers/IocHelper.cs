@@ -10,7 +10,7 @@ namespace PasswordManager.Api.Helpers
         {
             services.AddScoped<IPasswordManagerRepository,PasswordManagerRepository>();
 
-            services.AddScoped<ProperyService>();
+            services.AddScoped<PropertyService>();
         }
     }
 }

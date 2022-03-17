@@ -6,7 +6,11 @@ using System.Threading.Tasks;
 
 namespace PasswordManager.Service
 {
-    internal class UserService
+    public class UserService
     {
+        public object Get(Guid id)
+        {
+            return null;
+        }
     }
 }

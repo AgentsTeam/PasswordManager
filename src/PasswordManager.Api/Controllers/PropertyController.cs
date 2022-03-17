@@ -15,13 +15,13 @@ namespace PasswordManager.Api.Controllers
     [Produces("application/json")]
     public class PropertyController : ControllerBase
     {
-        private readonly ProperyService _service;
+        private readonly PropertyService _service;
 
         /// <summary>
         /// Constructor
         /// </summary>
         /// <param name="service"></param>
-        public PropertyController(ProperyService service)
+        public PropertyController(PropertyService service)
         {
             _service = service;
         }
