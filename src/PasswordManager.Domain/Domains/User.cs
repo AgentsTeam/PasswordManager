@@ -23,7 +23,12 @@ namespace PasswordManager.Domain.Domains
             UserName = userName;
             Password = password;
             CreateDate = DateTime.Now;
+            Properties = new List<Property>();
         }
 
+        public void AddProperty(Property property)
+        { 
+            Properties.Add(property);
+        }
     }
 }

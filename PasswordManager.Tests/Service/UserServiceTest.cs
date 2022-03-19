@@ -2,9 +2,9 @@
 using PasswordManager.Service;
 using System;
 
-namespace PasswordManagerTest.Service
+namespace PasswordManager.Tests.Service
 {
-    public class UserTest
+    public class UserServiceTest
     {
         UserService userService = new UserService();
 

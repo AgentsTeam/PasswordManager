@@ -17,10 +17,27 @@ namespace PasswordManager.Domain.Domains
 
         public Property(string name, string description, string value, Guid userId)
         {
+            ValidateStringData(name);
+            ValidateStringData(description);
+            ValidateStringData(value);
+            ValidateGuidData(userId);
+
             Name = name;
             Description = description;
             Value = value;
             UserId = userId;
+        }
+
+        private void ValidateStringData(string input)
+        {
+            if (string.IsNullOrWhiteSpace(input))
+                throw new ArgumentNullException(nameof(input));
+        }
+
+        private void ValidateGuidData(Guid? input)
+        {
+            if (input == null || input == Guid.Empty)
+                throw new ArgumentNullException(nameof(input));
         }
     }
 }

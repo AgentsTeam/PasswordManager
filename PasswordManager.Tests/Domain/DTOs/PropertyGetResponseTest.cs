@@ -3,7 +3,7 @@ using PasswordManager.Domain.DTOs;
 using System;
 using Xunit;
 
-namespace PasswordManagerTest.Domain.DTOs
+namespace PasswordManager.Tests.Domain.DTOs
 {
     public class PropertyGetResponseTest
     {
