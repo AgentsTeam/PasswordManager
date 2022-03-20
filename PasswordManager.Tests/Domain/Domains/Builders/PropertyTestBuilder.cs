@@ -2,7 +2,7 @@
 using System;
 
 
-namespace PasswordManager.Tests.Domain.Domains
+namespace PasswordManager.Tests.Unit.Domain.Domains.Builders
 {
     internal class PropertyTestBuilder
     {

@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
+﻿
 namespace PasswordManager.Domain.Domains
 {
     public class User
@@ -19,11 +14,45 @@ namespace PasswordManager.Domain.Domains
 
         public User(string userName, string password)
         {
+            ValidateStringData(userName);
+            ValidateStringData(password);
+
             Id = Guid.NewGuid();
             UserName = userName;
             Password = password;
             CreateDate = DateTime.Now;
             Properties = new List<Property>();
+        }
+
+        public User(string firstName, string lastName, string email, string userName, string password, DateTime createDate)
+        {
+            ValidateStringData(firstName);
+            ValidateStringData(lastName);
+            //ValidateStringData(email);
+            ValidateStringData(userName);
+            ValidateStringData(password);
+            ValidateDateTimeData(createDate);
+
+            Id = Guid.NewGuid();
+            FirstName = firstName;
+            LastName = lastName;
+            Email = email;
+            UserName = userName;
+            Password = password;
+            CreateDate = createDate;
+            Properties = new List<Property>();
+        }
+
+        private void ValidateStringData(string input)
+        {
+            if (string.IsNullOrWhiteSpace(input))
+                throw new ArgumentNullException(nameof(input));
+        }
+
+        private void ValidateDateTimeData(DateTime input)
+        {
+            if (input == DateTime.MinValue || input == DateTime.UnixEpoch || input == DateTime.MaxValue)
+                throw new ArgumentNullException(nameof(input));
         }
 
         public void AddProperty(Property property)

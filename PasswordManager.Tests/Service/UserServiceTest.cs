@@ -2,7 +2,7 @@
 using PasswordManager.Service;
 using System;
 
-namespace PasswordManager.Tests.Service
+namespace PasswordManager.Tests.Unit.Service
 {
     public class UserServiceTest
     {

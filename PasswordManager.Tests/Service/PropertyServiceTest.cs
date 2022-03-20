@@ -1,5 +1,5 @@
 ﻿
-namespace PasswordManager.Tests.Service
+namespace PasswordManager.Tests.Unit.Service
 {
     public class PropertyServiceTest
     {
