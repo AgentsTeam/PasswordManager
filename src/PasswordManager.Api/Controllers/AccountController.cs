@@ -48,7 +48,7 @@ namespace PasswordManager.Api.Controllers
                 LastName = command.LastName,
                 Email = command.Email
             };
-            user = await _repository.AddUser(user);
+            user = await _repository.AddUserAsync(user);
             if (user != null)
             {
                 return Ok();

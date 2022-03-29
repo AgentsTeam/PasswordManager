@@ -10,9 +10,9 @@ namespace PasswordManager.Domain.Contracts
     public interface IPasswordManagerRepository
     {
         User GetUser(string userName);
-        Task<User> AddUser(User user);
+        Task<User> AddUserAsync(User user);
 
         Property GetProperty(int id);
-        Task<Property> AddProperty(Property property);
+        Task<Property> AddPropertyAsync(Property property);
     }
 }

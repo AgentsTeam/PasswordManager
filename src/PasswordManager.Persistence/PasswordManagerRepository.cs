@@ -25,7 +25,7 @@ namespace PasswordManager.Persistence
         {
             return Users.FirstOrDefault(x => x.UserName == userName);
         }
-        public async Task<User> AddUser(User user)
+        public async Task<User> AddUserAsync(User user)
         {
             await Users.AddAsync(user);
             await SaveChangesAsync();
@@ -36,7 +36,7 @@ namespace PasswordManager.Persistence
         {
             return Properties.Find(id);
         }
-        public async Task<Property> AddProperty(Property property)
+        public async Task<Property> AddPropertyAsync(Property property)
         {
             await Properties.AddAsync(property);
             await SaveChangesAsync();

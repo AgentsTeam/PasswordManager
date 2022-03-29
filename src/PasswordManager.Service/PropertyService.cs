@@ -4,10 +4,6 @@ using PasswordManager.Domain.Contracts;
 using PasswordManager.Domain.Domains;
 using PasswordManager.Domain.DTOs;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace PasswordManager.Service
 {
@@ -37,7 +33,7 @@ namespace PasswordManager.Service
                 return null;
             }
             var property = new Property(command.Name, command.Description, command.Value, userId.Value);
-            property = await _repository.AddProperty(property);
+            property = await _repository.AddPropertyAsync(property);
             if (property == null)
             {
                 return null;
