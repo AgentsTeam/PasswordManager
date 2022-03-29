@@ -48,7 +48,7 @@ namespace PasswordManager.Api.Controllers
                 LastName = command.LastName,
                 Email = command.Email
             };
-            user = await _repository.AddUser(user);
+            user = await _repository.AddUserAsync(user);
             if (user != null)
             {
                 return Ok();
@@ -75,7 +75,7 @@ namespace PasswordManager.Api.Controllers
         {
             try
             {
-                var user = _repository.GetUser(command.UserName);
+                var user = _repository.GetUserAsync(command.UserName).Result;
                 if (user != null)
                 {
                     if (user.Password == command.Password)

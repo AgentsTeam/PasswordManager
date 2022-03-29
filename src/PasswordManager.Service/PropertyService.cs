@@ -22,12 +22,12 @@ namespace PasswordManager.Service
 
         public IResponse Get(int id)
         {
-            var property = _repository.GetProperty(id);
+            var property = _repository.GetPropertyAsync(id);
             if (property == null)
             {
                 return null;
             }
-            return new PropertyGetResponse(property);
+            return new PropertyGetResponse(property.Result);
         }
         public async Task<IResponse> Add(PropertyCommand command)
         {
@@ -37,7 +37,7 @@ namespace PasswordManager.Service
                 return null;
             }
             var property = new Property(command.Name, command.Description, command.Value, userId.Value);
-            property = await _repository.AddProperty(property);
+            property = await _repository.AddPropertyAsync(property);
             if (property == null)
             {
                 return null;

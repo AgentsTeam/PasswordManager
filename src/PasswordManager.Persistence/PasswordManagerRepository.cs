@@ -21,22 +21,22 @@ namespace PasswordManager.Persistence
 
         
 
-        public User GetUser(string userName)
+        public async Task<User> GetUserAsync(string userName)
         {
-            return Users.FirstOrDefault(x => x.UserName == userName);
+            return await Users.FirstOrDefaultAsync(x => x.UserName == userName);
         }
-        public async Task<User> AddUser(User user)
+        public async Task<User> AddUserAsync(User user)
         {
             await Users.AddAsync(user);
             await SaveChangesAsync();
             return user;
         }
 
-        public Property GetProperty(int id)
+        public async Task<Property> GetPropertyAsync(int id)
         {
-            return Properties.Find(id);
+            return await Properties.FirstOrDefaultAsync(x => x.Id == id);
         }
-        public async Task<Property> AddProperty(Property property)
+        public async Task<Property> AddPropertyAsync(Property property)
         {
             await Properties.AddAsync(property);
             await SaveChangesAsync();
