@@ -18,12 +18,12 @@ namespace PasswordManager.Service
 
         public IResponse Get(int id)
         {
-            var property = _repository.GetProperty(id);
+            var property = _repository.GetPropertyAsync(id);
             if (property == null)
             {
                 return null;
             }
-            return new PropertyGetResponse(property);
+            return new PropertyGetResponse(property.Result);
         }
         public async Task<IResponse> Add(PropertyCommand command)
         {

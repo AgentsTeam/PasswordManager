@@ -75,7 +75,7 @@ namespace PasswordManager.Api.Controllers
         {
             try
             {
-                var user = _repository.GetUser(command.UserName);
+                var user = _repository.GetUserAsync(command.UserName).Result;
                 if (user != null)
                 {
                     if (user.Password == command.Password)
