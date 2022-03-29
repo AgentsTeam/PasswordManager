@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using PasswordManager.Domain.Domains;
 using PasswordManager.Domain.Commands;
 using Tynamix.ObjectFiller;
+using PasswordManager.Domain.DTOs;
 
 namespace PasswordManager.Tests.Unit.Service
 {
@@ -40,15 +41,15 @@ namespace PasswordManager.Tests.Unit.Service
         }
 
         [Fact]
-        public async Task Get_ShouldReturnProperty_WhenPassedId()
+        public void Get_ShouldReturnProperty_WhenPassedId()
         { 
             var property = _propertyTestBuilder.Build();
-            _repository.AddPropertyAsync(Arg.Any<Property>()).Returns(property);
-            var propertyCreated = await _repository.AddPropertyAsync(property);
+            _repository.GetPropertyAsync(Arg.Any<int>()).Returns(property);
+            var propertyExpected = new PropertyGetResponse(property);
 
-            var result = _propertyService.Get(propertyCreated.Id);
+            var result = (PropertyGetResponse)_propertyService.Get(property.Id);
 
-            result.Should().Be(propertyCreated);
+            result.Id.Should().Be(propertyExpected.Id);
         }
 
         [Fact]
