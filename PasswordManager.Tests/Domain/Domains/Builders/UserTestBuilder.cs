@@ -10,7 +10,7 @@ namespace PasswordManager.Tests.Unit.Domain.Domains.Builders
         string FirstName { get; set; } = "TestFirstName";
         string LastName { get; set; } = "TestLastName";
         string Email { get; set; } = "TestEmail";
-        DateTime CreateDate { get; set; } = DateTime.Now.Date;
+        DateTime CreateDate { get; set; } = DateTime.UtcNow;
 
         public UserTestBuilder WithUserName(string userName)
         { 

@@ -20,7 +20,7 @@ namespace PasswordManager.Domain.Domains
             Id = Guid.NewGuid();
             UserName = userName;
             Password = password;
-            CreateDate = DateTime.Now;
+            CreateDate = DateTime.UtcNow;
             Properties = new List<Property>();
         }
 

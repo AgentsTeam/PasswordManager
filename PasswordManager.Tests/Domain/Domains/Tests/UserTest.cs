@@ -45,7 +45,7 @@ namespace PasswordManager.Tests.Unit.Domain.Domains.Tests
             string firstName = "TestFirstName";
             string lastName = "TestLastName";
             string email = "TestEmail";
-            DateTime createDate = DateTime.Now.Date;
+            DateTime createDate = DateTime.UtcNow;
 
             var result = _userBuilder.BuildNewUser();
 
@@ -54,7 +54,7 @@ namespace PasswordManager.Tests.Unit.Domain.Domains.Tests
             result.FirstName.Should().Be(firstName);
             result.LastName.Should().Be(lastName);
             result.Email.Should().Be(email);
-            result.CreateDate.Should().Be(createDate);
+            result.CreateDate.Date.Should().Be(createDate.Date);
         }
 
         [Theory]
