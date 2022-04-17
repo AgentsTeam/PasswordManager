@@ -7,7 +7,7 @@ using System;
 
 namespace PasswordManager.Service
 {
-    public class PropertyService
+    public class PropertyService : IPropertyService
     {
         private readonly IPasswordManagerRepository _repository;
 
@@ -25,7 +25,7 @@ namespace PasswordManager.Service
             }
             return new PropertyGetResponse(property.Result);
         }
-        public async Task<IResponse> Add(PropertyCommand command)
+        public async Task<IResponse> AddAsync(PropertyCommand command)
         {
             var userId = ContextHelper.GetUserId();
             if (userId == null)

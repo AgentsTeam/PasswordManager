@@ -62,7 +62,7 @@ namespace PasswordManager.Api.Controllers
         [HttpPost]
         public async Task<IActionResult> Add(PropertyCommand command)
         {
-            return Ok(await _service.Add(command));
+            return Ok(await _service.AddAsync(command));
         }
     }
 }
