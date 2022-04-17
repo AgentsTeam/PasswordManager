@@ -17,7 +17,7 @@ namespace PasswordManager.Tests.Integration.ClassFixture
         public DatabaseFixture()
         {
             var option = new DbContextOptionsBuilder<PasswordManagerRepository>()
-                .UseNpgsql("Host=192.168.21.129;Database=passwordmanager;Username=postgres;Password=1qa@WS3ed123")
+                .UseNpgsql("Host=srv2.sakkogroup.ir:2345;Database=passwordmanager;Username=postgres;Password=1qa@WS3ed123")
                 .Options;
             Repository = new PasswordManagerRepository(option);
             _scop = new TransactionScope();

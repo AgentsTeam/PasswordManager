@@ -3,7 +3,7 @@ using System;
 
 namespace PasswordManager.Tests.Unit.Domain.Domains.Builders
 {
-    internal class UserTestBuilder
+    public class UserTestBuilder
     {
         string UserName { get; set; } = "TestUserName";
         string Password { get; set; } = "TestPassword";

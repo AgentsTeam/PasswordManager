@@ -4,7 +4,7 @@ using System;
 
 namespace PasswordManager.Tests.Unit.Domain.Domains.Builders
 {
-    internal class PropertyTestBuilder
+    public class PropertyTestBuilder
     {
         string Name { get; set; } = "TestName";
         string Description { get; set; } = "TestDesc";
