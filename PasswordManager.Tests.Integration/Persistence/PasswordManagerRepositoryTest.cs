@@ -22,11 +22,22 @@ namespace PasswordManager.Tests.Integration.Persistence
         }
 
         [Fact]
-        public void GetUserAsync_ShouldReturnUsers()
+        public void GetUserAsync_ShouldReturnUserWithName()
         {
             var users = _repository.GetUserAsync("foad").Result;
 
             users.UserName.Should().Be("foad");
+        }
+
+        [Fact]
+        public void GetUserAsync_ShouldReturnUserWithId()
+        {
+            var newUser = _userBuilder.BuildNewUser();
+            var UserAdded = _repository.AddUserAsync(newUser).Result;
+            
+            var users = _repository.GetUserAsync(UserAdded.Id).Result;
+
+            users.Should().BeEquivalentTo(newUser);
         }
 
         [Fact]
@@ -77,13 +88,48 @@ namespace PasswordManager.Tests.Integration.Persistence
         [Fact]
         public void AddPropertyAsync_ShouldAddThePropertyToDataBase()
         {
-            var newProperty = _propertyTestBuilder.Build();
+            var user = _repository.GetUserAsync("foad").Result;
+
+            var newProperty = _propertyTestBuilder.WithUserId(user.Id).Build();
 
             var propertyAdded = _repository.AddPropertyAsync(newProperty).Result;
 
             propertyAdded.Should().BeEquivalentTo(newProperty);
 
         }
+
+        [Fact]
+        public void UpdateUserAsync_ShouldUpdateUserProperly()
+        {
+            var user = _repository.GetUserAsync("foad").Result;
+            user.UserName = "Foad Pashah";
+            user.Password = "654321";
+            user.FirstName = "Foad";
+            user.LastName = "Pashah";
+            user.Email = "Pashah_foad@outlook.com";
+
+            var userUpdated = _repository.UpdateUserAsync(user).Result;
+
+            var expectedUser = _repository.GetUserAsync(user.Id).Result;
+
+            userUpdated.Should().BeEquivalentTo(expectedUser);
+        }
+
+        [Fact]
+        public async Task DeleteUserAsync_ShouldDeleteExistingUser()
+        { 
+            var user = _userBuilder.BuildNewUser();
+            var userCreated = _repository.AddUserAsync(user).Result;
+
+            await _repository.DeleteUserAsync(userCreated.Id);
+
+            var expectedNullUser = _repository.GetUserAsync(userCreated.Id).Result;
+
+            expectedNullUser.Should().BeNull();
+        }
+
+
+
 
         
 

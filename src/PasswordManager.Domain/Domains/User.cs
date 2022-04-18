@@ -28,7 +28,6 @@ namespace PasswordManager.Domain.Domains
         {
             ValidateStringData(firstName);
             ValidateStringData(lastName);
-            //ValidateStringData(email);
             ValidateStringData(userName);
             ValidateStringData(password);
             ValidateDateTimeData(createDate);

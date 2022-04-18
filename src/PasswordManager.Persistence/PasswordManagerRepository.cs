@@ -25,11 +25,35 @@ namespace PasswordManager.Persistence
         {
             return await Users.FirstOrDefaultAsync(x => x.UserName == userName);
         }
+
+        public async Task<User> GetUserAsync(Guid id)
+        {
+            return await Users.FirstOrDefaultAsync(x => x.Id == id);
+        }
+
         public async Task<User> AddUserAsync(User user)
         {
             await Users.AddAsync(user);
             await SaveChangesAsync();
             return user;
+        }
+
+        public async Task<User> UpdateUserAsync(User user)
+        {
+            Users.Update(user);
+            await SaveChangesAsync();
+            return user;
+
+        }
+
+        public async Task DeleteUserAsync(Guid id)
+        {
+            var user = await Users.FirstOrDefaultAsync(x => x.Id == id);
+            if (user != null)
+            {
+                Users.Remove(user);
+                await SaveChangesAsync();
+            }
         }
 
         public async Task<Property> GetPropertyAsync(int id)
@@ -43,6 +67,5 @@ namespace PasswordManager.Persistence
             return property;
         }
 
-        
     }
 }
