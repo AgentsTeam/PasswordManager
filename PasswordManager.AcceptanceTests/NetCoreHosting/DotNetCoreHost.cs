@@ -9,7 +9,7 @@ namespace PasswordManager.AcceptanceTests.NetCoreHosting
     {
         private readonly DotNetCoreHostOptions _options;
 
-        public string BaseUrl => $"http://localhost:{_options.Port}";
+        public string BaseUrl => $"https://localhost:{_options.Port}";
         private readonly AutoResetEvent _resetEvent = new AutoResetEvent(false);
 
         public DotNetCoreHost(DotNetCoreHostOptions options)

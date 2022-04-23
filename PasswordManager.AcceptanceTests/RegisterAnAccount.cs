@@ -1,11 +1,12 @@
-﻿using PasswordManager.AcceptanceTests.Steps;
+﻿using PasswordManager.AcceptanceTests.ClassFixtures;
+using PasswordManager.AcceptanceTests.Steps;
 using PasswordManager.Domain.Commands;
 using TestStack.BDDfy;
 using Xunit;
 
 namespace PasswordManager.AcceptanceTests
 {
-    public class RegisterAnAccount
+    public class RegisterAnAccount : IClassFixture<BuildHostFixture>
     {
         StepsOfRegisterAnAccount steps = new StepsOfRegisterAnAccount();
 
@@ -23,9 +24,8 @@ namespace PasswordManager.AcceptanceTests
         {
             this.Given(_ => steps.IWantToCreateAnAccountAsUser(user) , "Given I want to create Neo Matrix account as User")
                 .When(_ => steps.IPressRegisterButton())
-                .Then(_ => steps.MyAccountShouldBeCreatedinUsers(user), "Then Neo Matrix Account should be created in Users")
+                .Then(_ => steps.MyAccountShouldBeCreatedinUsers(), "Then Neo Matrix Account should be created in Users")
                 .BDDfy();
-        }
-
+        } 
     }
 }

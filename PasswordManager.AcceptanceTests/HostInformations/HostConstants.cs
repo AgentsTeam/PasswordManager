@@ -2,7 +2,7 @@
 {
     public static class HostConstants
     {
-        public static int Port { get; set; }
+        public static readonly int Port = 7245;
 
         public static readonly string Endpoint = $"https://localhost:{Port}/api";
 

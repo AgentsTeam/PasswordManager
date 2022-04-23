@@ -1,31 +1,42 @@
-﻿using PasswordManager.AcceptanceTests.CoreHost;
+﻿using FluentAssertions;
 using PasswordManager.AcceptanceTests.HostInformations;
-using PasswordManager.AcceptanceTests.NetCoreHosting;
 using PasswordManager.Domain.Commands;
+using RestSharp;
+using System;
+using System.Net;
+using System.Threading.Tasks;
 
 namespace PasswordManager.AcceptanceTests.Steps
 {
     public class StepsOfRegisterAnAccount
     {
-        private readonly IStartableHost _host = new DotNetCoreHost(new DotNetCoreHostOptions()
-        {
-            CsProjectPath = HostConstants.CsProjectPath,
-            Port = HostConstants.Port
-        });
+        private HttpStatusCode _responseStatus;
+
+        private UserRegisterCommand _userRegister;
 
         public void IWantToCreateAnAccountAsUser(UserRegisterCommand userRegister)
         {
-            _host.Start();
+            _userRegister = userRegister;
         }
 
         public void IPressRegisterButton()
-        { 
+        {
+            _responseStatus = PostTheRegisterAccountAsync(_userRegister).Result;
+        }
+
+        public void MyAccountShouldBeCreatedinUsers()
+        {
+            _responseStatus.Should().Be(HttpStatusCode.OK);
             
         }
 
-        public void MyAccountShouldBeCreatedinUsers(UserRegisterCommand userRegister)
-        { 
-            _host.Stop();
+        private async Task<HttpStatusCode> PostTheRegisterAccountAsync(UserRegisterCommand userRegister)
+        {
+            var restClient = new RestClient(HostConstants.Endpoint);
+            var restRequest = new RestRequest("Account/Register", Method.Post);
+            restRequest.AddJsonBody(userRegister);
+            var response = await restClient.PostAsync(restRequest);
+            return response.StatusCode;
         }
     }
 }
