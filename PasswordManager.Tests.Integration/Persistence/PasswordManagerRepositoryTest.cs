@@ -2,10 +2,9 @@
 using PasswordManager.Persistence;
 using PasswordManager.Tests.Integration.ClassFixture;
 using System;
-using System.Threading.Tasks;
 using Xunit;
 using PasswordManager.Tests.Unit.Domain.Domains.Builders;
-using System.Linq;
+using System.Transactions;
 
 namespace PasswordManager.Tests.Integration.Persistence
 {
@@ -16,7 +15,7 @@ namespace PasswordManager.Tests.Integration.Persistence
         private readonly PropertyTestBuilder _propertyTestBuilder;
         public PasswordManagerRepositoryTest(DatabaseFixture database)
         {
-            _repository = database.Repository;
+            _repository = new PasswordManagerRepository(database.Context);
             _userBuilder = new UserTestBuilder();
             _propertyTestBuilder = new PropertyTestBuilder();
         }
@@ -24,115 +23,117 @@ namespace PasswordManager.Tests.Integration.Persistence
         [Fact]
         public void GetUserAsync_ShouldReturnUserWithName()
         {
-            var users = _repository.GetUserAsync("foad").Result;
+            var users = _repository.GetUserAsync("foadTest").Result;
 
-            users.UserName.Should().Be("foad");
+            users.Should().NotBeNull();
+            users.UserName.Should().Be("foadTest");
         }
 
         [Fact]
         public void GetUserAsync_ShouldReturnUserWithId()
         {
-            var newUser = _userBuilder.BuildNewUser();
-            var UserAdded = _repository.AddUserAsync(newUser).Result;
-            
-            var users = _repository.GetUserAsync(UserAdded.Id).Result;
+            using (var scop = new TransactionScope())
+            {
+                var newUser = _userBuilder.BuildNewUser();
+                var UserAdded = _repository.AddUserAsync(newUser).Result;
 
-            users.Should().BeEquivalentTo(newUser);
+                var users = _repository.GetUserAsync(UserAdded.Id).Result;
+
+                users.Should().BeEquivalentTo(newUser); 
+            }
         }
 
         [Fact]
         public void AddUserAsync_shouldAddTheUserToDataBase()
         {
-            var newUser = _userBuilder.BuildNewUser();
+            using (var scope = new TransactionScope())
+            {
+                var newUser = _userBuilder.WithFirstName("TestAdduser").WithLastName("Test").BuildNewUser();
 
-            var userAdded = _repository.AddUserAsync(newUser).Result;
+                var userAdded = _repository.AddUserAsync(newUser).Result;
 
-            var users = _repository.GetUserAsync("TestUserName").Result;
+                var users = _repository.GetUserAsync("TestUserName").Result;
 
-            userAdded.Should().Be(users);
+                userAdded.Should().Be(users); 
+            }
         }
 
         [Fact]
         public void AddUserAsync_shouldReturnTheUserThatProvided()
         {
-            var newUser = _userBuilder.BuildNewUser();
+            using (var scop = new TransactionScope())
+            {
+                var newUser = _userBuilder.WithFirstName("TestAdduser2").WithLastName("Test2").BuildNewUser();
 
-            var userAdded = _repository.AddUserAsync(newUser).Result;
+                var userAdded = _repository.AddUserAsync(newUser).Result;
 
-            userAdded.Should().BeEquivalentTo(newUser);
-        }
-
-        [Fact]
-        public void AddPropertyAsync_ShouldReturnThePropertyThatProvided()
-        {
-            var newProperty = _propertyTestBuilder.WithUserId(_repository.Users.FirstOrDefault(x=>x.UserName.ToLower() == "foad").Id).Build();
-
-            var propertyAdded = _repository.AddPropertyAsync(newProperty).Result;
-            
-            propertyAdded.Should().BeEquivalentTo(newProperty);
-        }
-
-        [Fact]
-        public void GetPropertyAsync_ShouldReturnProperty()
-        {
-            var newProperty = _propertyTestBuilder.WithUserId(_repository.Users.FirstOrDefault(x => x.UserName.ToLower() == "foad").Id).Build();
-
-            var propertyAdded = _repository.AddPropertyAsync(newProperty).Result;
-            var property = _repository.GetPropertyAsync(propertyAdded.Id).Result;
-
-            var user = _repository.GetUserAsync("foad").Result;
-
-            property.User.Should().Be(user);
-        }
-
-        [Fact]
-        public void AddPropertyAsync_ShouldAddThePropertyToDataBase()
-        {
-            var user = _repository.GetUserAsync("foad").Result;
-
-            var newProperty = _propertyTestBuilder.WithUserId(user.Id).Build();
-
-            var propertyAdded = _repository.AddPropertyAsync(newProperty).Result;
-
-            propertyAdded.Should().BeEquivalentTo(newProperty);
-
+                userAdded.Should().BeEquivalentTo(newUser); 
+            }
         }
 
         [Fact]
         public void UpdateUserAsync_ShouldUpdateUserProperly()
         {
-            var user = _repository.GetUserAsync("foad").Result;
-            user.UserName = "Foad Pashah";
-            user.Password = "654321";
-            user.FirstName = "Foad";
-            user.LastName = "Pashah";
-            user.Email = "Pashah_foad@outlook.com";
+            using (var scop = new TransactionScope())
+            {
+                var user = _userBuilder.WithUserName("alex").WithFirstName("Alex").WithLastName("Morgan").WithPassword("654321")
+                        .WithEmail("alex.morgan@gmail.com").WithCreateDate(DateTime.UtcNow).BuildNewUser();
+                var userAdded = _repository.AddUserAsync(user).Result;
+                userAdded.UserName = "alfred Morgan";
+                userAdded.Password = "987654";
+                userAdded.FirstName = "Alfred";
+                userAdded.LastName = "Morgan";
+                userAdded.Email = "Morgan_Alfred@outlook.com";
 
-            var userUpdated = _repository.UpdateUserAsync(user).Result;
+                var userUpdated = _repository.UpdateUserAsync(userAdded).Result;
+                var expectedUser = _repository.GetUserAsync(userAdded.Id).Result;
 
-            var expectedUser = _repository.GetUserAsync(user.Id).Result;
-
-            userUpdated.Should().BeEquivalentTo(expectedUser);
+                userUpdated.Should().BeEquivalentTo(expectedUser); 
+            }
         }
 
         [Fact]
-        public async Task DeleteUserAsync_ShouldDeleteExistingUser()
-        { 
+        public void DeleteUserAsync_ShouldDeleteExistingUser()
+        {
             var user = _userBuilder.BuildNewUser();
             var userCreated = _repository.AddUserAsync(user).Result;
 
-            await _repository.DeleteUserAsync(userCreated.Id);
+            _repository.DeleteUserAsync(userCreated.Id).Wait();
 
             var expectedNullUser = _repository.GetUserAsync(userCreated.Id).Result;
 
             expectedNullUser.Should().BeNull();
         }
 
+        [Fact]
+        public void AddPropertyAsync_ShouldReturnThePropertyThatProvided()
+        {
+            using (var scop = new TransactionScope())
+            {
+                var user = _userBuilder.WithUserName("DavidTest").WithFirstName("fnTest").WithLastName("lnTest").BuildNewUser();
+                var userAdded = _repository.AddUserAsync(user).Result;
+                var newProperty = _propertyTestBuilder.WithUserId(userAdded.Id).Build();
 
+                var propertyAdded = _repository.AddPropertyAsync(newProperty).Result;
 
+                propertyAdded.Should().BeEquivalentTo(newProperty); 
+            }
+        }
 
-        
+        [Fact]
+        public void GetPropertyAsync_ShouldReturnProperty()
+        {
+            using (var scop = new TransactionScope())
+            {
+                var user = _userBuilder.WithUserName("DavidTest").WithFirstName("fnTest").WithLastName("lnTest").BuildNewUser();
+                var userAdded = _repository.AddUserAsync(user).Result;
+                var newProperty = _propertyTestBuilder.WithUserId(userAdded.Id).Build();
 
+                var propertyAdded = _repository.AddPropertyAsync(newProperty).Result;
+                var property = _repository.GetPropertyAsync(propertyAdded.Id).Result;
 
+                property.User.Should().Be(userAdded); 
+            }
+        }
     }
 }

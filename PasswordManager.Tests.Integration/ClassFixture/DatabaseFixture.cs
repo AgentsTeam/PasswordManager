@@ -12,35 +12,36 @@ namespace PasswordManager.Tests.Integration.ClassFixture
 {
     public class DatabaseFixture : IDisposable
     {
-        public PasswordManagerRepository Repository;
-        public TransactionScope _scop;
-        
+        private readonly TransactionScope _scop;
+        public PasswordManagerContext Context;
+
+        private User user1 = new User("FoadTest", "Pashah", "foad.2000matrix@gmail.com", "foadTest", "123456", DateTime.UtcNow);
+        private User user2 = new User("MasoudTest", "Moghadam", "Masoud.test@gmail.com", "MasoudTest", "123456", DateTime.UtcNow);
+        private Property property1 = new Property("GooglePassTest", "Password Of google", "123456789", Guid.NewGuid());
         public DatabaseFixture()
         {
-            var option = new DbContextOptionsBuilder<PasswordManagerRepository>()
+            var option = new DbContextOptionsBuilder<PasswordManagerContext>()
                 .UseNpgsql("Host=srv2.sakkogroup.ir:2345;Database=passwordmanager;Username=postgres;Password=1qa@WS3ed123")
                 .Options;
-            Repository = new PasswordManagerRepository(option);
-            _scop = new TransactionScope();
-
-            var user1 = new User("Foad", "Pashah", "foad.2000matrix@gmail.com","foad", "123456", DateTime.UtcNow);
-            var user2 = new User("Masoud", "Moghadam", "Masoud.test@gmail.com", "Masoud", "123456", DateTime.UtcNow);
-
-            Repository.AddRange(new[] { user1, user2 });
-            Repository.SaveChanges();
-
-            var property1 = new Property("GooglePass", "Password Of google", "123456789", user1.Id);
-
+            Context = new PasswordManagerContext(option);
             
-            Repository.Add(property1);
-            Repository.SaveChanges();
+            Context.AddRange(new[] { user1, user2 });
+            Context.SaveChanges();
+
+            property1.UserId = user1.Id;
+            property1.User = user1;
+
+            Context.Add(property1);
+            Context.SaveChanges();
             
         }
 
         public void Dispose()
         {
-            Repository.DisposeAsync();
-            _scop.Dispose();
+            Context.Properties.Remove(property1);
+            Context.Users.RemoveRange(new User[] { user1, user2 });
+            Context.SaveChanges();
+            Context.Dispose();
         }
     }
 }

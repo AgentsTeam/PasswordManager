@@ -11,7 +11,7 @@ using PasswordManager.Common.Filters;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add Database
-builder.Services.AddDbContext<PasswordManagerRepository>(options =>
+builder.Services.AddDbContext<PasswordManagerContext>(options =>
 {
     options.UseNpgsql(builder.Configuration.GetConnectionString("PasswordManagerDb"));
 });

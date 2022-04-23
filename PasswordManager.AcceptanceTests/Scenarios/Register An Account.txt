@@ -1,0 +1,10 @@
+﻿Title : Register An Account
+
+As a Client
+I Want To Register A New Account
+So That I Should be able to Create my account from Panel
+
+Scenario: Create A new Account
+	Given I want to create Neo Matrix account as User
+	When I press Register Button 
+	Then Neo Matrix Account should be created in Users
