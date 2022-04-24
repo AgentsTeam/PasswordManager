@@ -13,9 +13,9 @@ namespace PasswordManager.Tests.Integration.Api
 
         public PropertyControllerTest()
         {
-            //var appFactory = new WebApplicationFactory<Program>();
-            //var httpClient = appFactory.CreateClient();
-            //_restfulClient = new RESTFulApiFactoryClient(httpClient);
+            var appFactory = new WebApplicationFactory<Program>();
+            var httpClient = appFactory.CreateClient();
+            _restfulClient = new RESTFulApiFactoryClient(httpClient);
         }
 
         [Fact]

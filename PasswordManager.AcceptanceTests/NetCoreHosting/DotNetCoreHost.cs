@@ -47,7 +47,7 @@ namespace PasswordManager.AcceptanceTests.NetCoreHosting
 
         private void ProcessOnErrorDataReceived(object sender, DataReceivedEventArgs e)
         {
-            if (!string.IsNullOrEmpty(e.Data))
+            if (!string.IsNullOrWhiteSpace(e.Data))
                 throw new Exception(e.Data);
         }
 
